@@ -1,0 +1,2 @@
+INSERT INTO public.provider (id_provider, id_business, name, contact_name, phone, address, active, create_by, create_date, update_by, update_date) VALUES (1, 1, 'Distribuciones El Cóndor', 'Luis Martínez', '3114567890', 'Cra 12 #34-56', true, 'admin', '2025-04-16 17:54:40.487334', null, null);
+INSERT INTO public.provider (id_provider, id_business, name, contact_name, phone, address, active, create_by, create_date, update_by, update_date) VALUES (2, 1, 'Alimentos Express', 'Marta Gómez', '3129876543', 'Av 9 #10-11', true, 'admin', '2025-04-16 17:54:40.487334', null, null);

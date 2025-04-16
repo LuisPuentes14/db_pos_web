@@ -1,0 +1,2 @@
+INSERT INTO public.category (id_category, id_business, name, id_measure, active, create_by, create_date, update_by, update_date) VALUES (1, 1, 'Bebidas', 2, true, 'admin', '2025-04-16 17:54:40.478691', null, null);
+INSERT INTO public.category (id_category, id_business, name, id_measure, active, create_by, create_date, update_by, update_date) VALUES (2, 1, 'Snacks', 1, true, 'admin', '2025-04-16 17:54:40.478691', null, null);

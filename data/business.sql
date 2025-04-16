@@ -1,0 +1,1 @@
+INSERT INTO public.business (id_business, business_name, tax_id, address, phone, email, currency_symbol, logo_name, logo_url, create_by, create_date, update_by, update_date) VALUES (1, 'Comercial XYZ', '900123456', 'Calle 123 #45-67', '3101234567', 'ventas@xyz.com', '$', 'logo.png', 'http://example.com/logo.png', 'admin', '2025-04-16 17:54:40.449356', null, null);
