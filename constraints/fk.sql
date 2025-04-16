@@ -1,43 +1,44 @@
-ALTER TABLE IF EXISTS public.category
-    ADD CONSTRAINT fk_category_Measure FOREIGN KEY (id_measure)
-        REFERENCES public.Measure (id_measure) MATCH SIMPLE,
+ALTER TABLE IF EXISTS public.categories
+    ADD CONSTRAINT fk_category_Measure FOREIGN KEY (id_type_measure)
+        REFERENCES public.types_measures (id_type_measure) MATCH SIMPLE,
     ADD CONSTRAINT fk_category_business FOREIGN KEY (id_business)
         REFERENCES public.business (id_business) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
-
 ALTER TABLE IF EXISTS public.sales_detail
     ADD CONSTRAINT fk_sales_detail_sale FOREIGN KEY (id_sale)
-        REFERENCES public.sale (id_sale) MATCH SIMPLE
+        REFERENCES public.sales (id_sale) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
-ALTER TABLE IF EXISTS public.product
+ALTER TABLE IF EXISTS public.products
     ADD CONSTRAINT fk_product_category FOREIGN KEY (id_category)
-        REFERENCES public.category (id_category) MATCH SIMPLE,
+        REFERENCES public.categories (id_category) MATCH SIMPLE,
     ADD CONSTRAINT fk_product_business FOREIGN KEY (id_business)
         REFERENCES public.business (id_business) MATCH SIMPLE,
     ADD CONSTRAINT fk_product_provider FOREIGN KEY (id_provider)
-        REFERENCES public.provider (id_provider) MATCH SIMPLE
+        REFERENCES public.providers (id_provider) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
-ALTER TABLE IF EXISTS public.user_account
+ALTER TABLE IF EXISTS public.user_accounts
     ADD CONSTRAINT fk_user_account_role FOREIGN KEY (id_role)
-        REFERENCES public.role (id_role) MATCH SIMPLE,
+        REFERENCES public.roles (id_role) MATCH SIMPLE,
     ADD CONSTRAINT fk_user_account_business FOREIGN KEY (id_business)
         REFERENCES public.business (id_business) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
-ALTER TABLE IF EXISTS public.sale
+ALTER TABLE IF EXISTS public.sales
     ADD CONSTRAINT fk_sale_user_account FOREIGN KEY (id_user)
-        REFERENCES public.user_account (id_user) MATCH SIMPLE
+        REFERENCES public.user_accounts (id_user) MATCH SIMPLE,
+    ADD CONSTRAINT fk_sale_business FOREIGN KEY (id_business)
+        REFERENCES public.business (id_business) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
-ALTER TABLE IF EXISTS public.provider
+ALTER TABLE IF EXISTS public.providers
     ADD CONSTRAINT fk_provider_business FOREIGN KEY (id_business)
         REFERENCES public.business (id_business) MATCH SIMPLE
         ON UPDATE NO ACTION
@@ -49,15 +50,9 @@ ALTER TABLE IF EXISTS public.sales_sequence
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
-ALTER TABLE IF EXISTS public.sale
-    ADD CONSTRAINT fk_sale_business FOREIGN KEY (id_business)
-        REFERENCES public.business (id_business) MATCH SIMPLE
-        ON UPDATE NO ACTION
-        ON DELETE NO ACTION;
-
 ALTER TABLE IF EXISTS public.cash_register_sessions
     ADD CONSTRAINT fk_cash_register_sessions_user_account FOREIGN KEY (id_user)
-        REFERENCES public.user_account (id_user) MATCH SIMPLE
+        REFERENCES public.user_accounts (id_user) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
@@ -65,7 +60,7 @@ ALTER TABLE IF EXISTS public.cash_entries_withdrawals
     ADD CONSTRAINT fk_cash_entries_withdrawals_cash_register_sessions FOREIGN KEY (id_cash_register_session)
         REFERENCES public.cash_register_sessions (id_cash_register_session) MATCH SIMPLE,
     ADD CONSTRAINT fk_cash_entries_withdrawals_user_account FOREIGN KEY (id_user)
-        REFERENCES public.user_account (id_user) MATCH SIMPLE
+        REFERENCES public.user_accounts (id_user) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
@@ -73,7 +68,7 @@ ALTER TABLE IF EXISTS public.cash_counts
     ADD CONSTRAINT fk_cash_entries_withdrawals_cash_register_sessions FOREIGN KEY (id_cash_register_session)
         REFERENCES public.cash_register_sessions (id_cash_register_session) MATCH SIMPLE,
     ADD CONSTRAINT fk_cash_entries_withdrawals_user_account FOREIGN KEY (id_user)
-        REFERENCES public.user_account (id_user) MATCH SIMPLE
+        REFERENCES public.user_accounts (id_user) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 

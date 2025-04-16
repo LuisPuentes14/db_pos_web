@@ -24,21 +24,21 @@ CREATE TABLE business
 
 
 -- Categorias de los productos
-CREATE TABLE category
+CREATE TABLE categories
 (
-    id_category BIGSERIAL PRIMARY KEY,
-    id_business BIGINT,
-    name        VARCHAR(50) NOT NULL,
-    id_measure  BIGINT,
-    active      BOOLEAN   DEFAULT TRUE,
-    create_by   VARCHAR(255),
-    create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_by   VARCHAR(255),
-    update_date TIMESTAMP
+    id_category     BIGSERIAL PRIMARY KEY,
+    id_business     BIGINT,
+    name            VARCHAR(50) NOT NULL,
+    id_type_measure BIGINT,
+    active          BOOLEAN   DEFAULT TRUE,
+    create_by       VARCHAR(255),
+    create_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_by       VARCHAR(255),
+    update_date     TIMESTAMP
 );
 
 -- proveedor de los productos
-CREATE TABLE provider
+CREATE TABLE providers
 (
     id_provider  BIGSERIAL PRIMARY KEY,
     id_business  BIGINT,
@@ -54,7 +54,7 @@ CREATE TABLE provider
 );
 
 -- productos
-CREATE TABLE product
+CREATE TABLE products
 (
     id_product       BIGSERIAL PRIMARY KEY,
     id_business      BIGINT,
@@ -80,13 +80,13 @@ CREATE TABLE sales_sequence
     id_sale_sequence BIGSERIAL,
     id_business      BIGINT,
     series           VARCHAR(3) NOT NULL,
-    number           BIGINT        NOT NULL,
+    number           BIGINT     NOT NULL,
     active           BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id_business, series, number)
 );
 
 -- ventas
-CREATE TABLE sale
+CREATE TABLE sales
 (
     id_sale           BIGSERIAL PRIMARY KEY,
     id_business       BIGINT,
@@ -117,24 +117,24 @@ CREATE TABLE sales_detail
 );
 
 -- tipos de medidas para los productos
-CREATE TABLE measure
+CREATE TABLE types_measures
 (
-    id_measure   BIGSERIAL PRIMARY KEY,
-    name         VARCHAR(50) NOT NULL,
-    abbreviation VARCHAR(4)  NOT NULL,
-    equivalent   VARCHAR(4)  NOT NULL,
-    value        INT         NOT NULL,
-    create_by    VARCHAR(255),
-    create_date  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_by    VARCHAR(255),
-    update_date  TIMESTAMP
+    id_type_measure BIGSERIAL PRIMARY KEY,
+    name            VARCHAR(50) NOT NULL,
+    abbreviation    VARCHAR(4)  NOT NULL,
+    equivalent      VARCHAR(4)  NOT NULL,
+    value           INT         NOT NULL,
+    create_by       VARCHAR(255),
+    create_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_by       VARCHAR(255),
+    update_date     TIMESTAMP
 );
 
 -- apertura y cierre de la caja
 CREATE TABLE cash_register_sessions
 (
     id_cash_register_session BIGSERIAL PRIMARY KEY,
-    id_user                  BIGINT        NOT NULL,                                                             -- ID del cajero
+    id_user                  BIGINT         NOT NULL,                                                             -- ID del cajero
     opening_amount           NUMERIC(12, 2) NOT NULL,
     closing_amount           NUMERIC(12, 2),
     status                   VARCHAR(20)    NOT NULL DEFAULT 'ABIERTO' CHECK (status IN ('ABIERTO', 'CERRADO') ), -- ABIERTO | CERRADO
@@ -149,7 +149,7 @@ CREATE TABLE cash_register_sessions
 CREATE TABLE cash_entries_withdrawals
 (
     id_cash_entry_withdrawal BIGSERIAL PRIMARY KEY,
-    id_cash_register_session BIGINT        NOT NULL,
+    id_cash_register_session BIGINT         NOT NULL,
     amount                   NUMERIC(12, 2) NOT NULL CHECK ( amount >= 0 ),
     reason                   TEXT           NOT NULL,
     id_user                  BIGINT,
@@ -164,13 +164,13 @@ CREATE TABLE cash_entries_withdrawals
 CREATE TABLE cash_counts
 (
     id_cash_count            BIGSERIAL PRIMARY KEY,
-    id_cash_register_session BIGINT        NOT NULL ,
+    id_cash_register_session BIGINT         NOT NULL,
     counted_amount           NUMERIC(12, 2) NOT NULL,
-    difference               NUMERIC(12, 2),          -- diferencia entre lo contado y lo esperado
+    difference               NUMERIC(12, 2), -- diferencia entre lo contado y lo esperado
     notes                    TEXT,
     id_user                  BIGINT,
     create_by                VARCHAR(255),
-    create_date              TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
+    create_date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_by                VARCHAR(255),
     update_date              TIMESTAMP
 );
@@ -182,14 +182,14 @@ CREATE TABLE cash_counts
 
 
 -- roles de los usuarios
-CREATE TABLE role
+CREATE TABLE roles
 (
     id_role SERIAL PRIMARY KEY,
     name    VARCHAR(50) NOT NULL
 );
 
 -- usuaarios que van a ingregar a la pagina
-CREATE TABLE user_account
+CREATE TABLE user_accounts
 (
     id_user        SERIAL PRIMARY KEY,
     id_business    INT,

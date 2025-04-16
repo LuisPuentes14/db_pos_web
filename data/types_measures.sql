@@ -1,0 +1,3 @@
+INSERT INTO public.types_measures (id_type_measure, name, abbreviation, equivalent, value, create_by, create_date, update_by, update_date) VALUES (1, 'Unidad', 'u', 'u', 1, 'admin', '2025-04-16 17:54:40.466772', null, null);
+INSERT INTO public.types_measures (id_type_measure, name, abbreviation, equivalent, value, create_by, create_date, update_by, update_date) VALUES (2, 'Litro', 'L', 'ml', 1000, 'admin', '2025-04-16 17:54:40.466772', null, null);
+INSERT INTO public.types_measures (id_type_measure, name, abbreviation, equivalent, value, create_by, create_date, update_by, update_date) VALUES (3, 'Kilogramo', 'Kg', 'g', 1000, 'admin', '2025-04-16 17:54:40.466772', null, null);

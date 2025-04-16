@@ -1,0 +1,1 @@
+INSERT INTO public.sales (id_sale, id_business, sale_number, id_user, client_name, total_price, paid_amount, change, registration_date, active, create_by, create_date) VALUES (1, 1, '0001-1', 1, 'Juan Pérez', 2200.00, 2500.00, 300.00, '2025-04-16 17:54:40.510908', true, 'admin', '2025-04-16 17:54:40.510908');
