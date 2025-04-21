@@ -74,6 +74,16 @@ CREATE TABLE products
     update_date      TIMESTAMP
 );
 
+CREATE TABLE clients
+(
+    id_client BIGSERIAL PRIMARY KEY,
+    name      VARCHAR(255),
+    dni       VARCHAR(255),
+    email     VARCHAR(255),
+    phone     VARCHAR(20),
+    address   VARCHAR(255)
+);
+
 -- secuencias numericas de los productos
 CREATE TABLE sales_sequence
 (
@@ -92,7 +102,7 @@ CREATE TABLE sales
     id_business       BIGINT,
     sale_number       VARCHAR(10),
     id_user           BIGINT, --usuario que regsitro la venta
-    client_name       VARCHAR(60),
+    id_client         BIGINT,
     total_price       DECIMAL(10, 2) NOT NULL,
     paid_amount       DECIMAL(10, 2),
     change            DECIMAL(10, 2),
@@ -227,10 +237,90 @@ CREATE TABLE menu
 
 --Facturacion electronica DIAN
 ---------------------------------------------------
-CREATE TABLE contributor_type
+
+-- Tabla: country
+CREATE TABLE countries
 (
+    id_country BIGSERIAL PRIMARY KEY,
+    code       VARCHAR(20)  NOT NULL,
+    name       VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
+
+-- Tabla: state (equivale a "departamento")
+CREATE TABLE states
+(
+    id_state   BIGSERIAL PRIMARY KEY,
+    code       VARCHAR(20),
+    name       VARCHAR(100) NOT NULL,
+    id_country INTEGER      NOT NULL,
+    UNIQUE (code, name)
+);
+
+-- Tabla: city (equivale a "municipio")
+CREATE TABLE cities
+(
+    id_city  BIGSERIAL PRIMARY KEY,
+    code     VARCHAR(20),
+    name     VARCHAR(100) NOT NULL,
+    id_state INTEGER      NOT NULL,
+    FOREIGN KEY (id_state) REFERENCES states (id_state) ON DELETE CASCADE,
+    UNIQUE (code, name)
+);
+
+-- Tabla: tipo de indentificacion
+CREATE TABLE types_identification
+(
+    id_types_identification BIGSERIAL PRIMARY KEY,
+    code                    VARCHAR(20),
+    name                    VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
+
+-- Tabla: tipos de contribuyentes
+CREATE TABLE types_contributors
+(
+    id_type_contributor BIGSERIAL PRIMARY KEY,
+    code                VARCHAR(20),
+    name                VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
+
+-- Tabla: regimen fiscal
+CREATE TABLE types_tax_regime
+(
+    id_type_tax_regime BIGSERIAL PRIMARY KEY,
+    code               VARCHAR(20),
+    name               VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
 
 
+-- Tabla: responsabilidad fiscal
+CREATE TABLE types_fiscal_responsibility
+(
+    id_type_fiscal_responsibility BIGSERIAL PRIMARY KEY,
+    code                          VARCHAR(20),
+    name                          VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
+
+-- Tabla: forma de pago
+CREATE TABLE types_form_payment
+(
+    id_types_form_payment BIGSERIAL PRIMARY KEY,
+    code                    VARCHAR(20),
+    name                    VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
+
+-- Tabla: tipos metodos de pago
+CREATE TABLE types_payment_methods
+(
+    id_type_payment_methods BIGSERIAL PRIMARY KEY,
+    code                    VARCHAR(20),
+    name                    VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
 );
 
 

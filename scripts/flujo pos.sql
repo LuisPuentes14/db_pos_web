@@ -38,6 +38,9 @@ VALUES (1, 'A01', 1);
 
 
 --------------------------------------------- FLUJO DE CAJA ---------------------------------------------
+
+-- NO SE PUEDE INICIAR UNA VENTAR SI LA CAJA NO ESTA ABIERTA
+
 -- Etapa 2: Apertura de caja
 INSERT INTO cash_register_sessions (id_user, opening_amount, status, create_by)
 VALUES (2, 100.00, 'ABIERTO', 'marial');

@@ -72,4 +72,22 @@ ALTER TABLE IF EXISTS public.cash_counts
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
+ALTER TABLE IF EXISTS public.sales
+    ADD CONSTRAINT fk_sales_clients FOREIGN KEY (id_client)
+        REFERENCES public.clients (id_client) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
+ALTER TABLE IF EXISTS public.states
+    ADD CONSTRAINT fk_states_countries FOREIGN KEY (id_country)
+        REFERENCES public.countries (id_country) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.cities
+    ADD CONSTRAINT fk_cities_states FOREIGN KEY (id_state)
+        REFERENCES public.states (id_state) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
 
