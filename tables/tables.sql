@@ -76,12 +76,24 @@ CREATE TABLE products
 
 CREATE TABLE clients
 (
-    id_client BIGSERIAL PRIMARY KEY,
-    name      VARCHAR(255),
-    dni       VARCHAR(255),
-    email     VARCHAR(255),
-    phone     VARCHAR(20),
-    address   VARCHAR(255)
+    id_client                     BIGSERIAL PRIMARY KEY,
+    name                          VARCHAR(255),
+    dni                           VARCHAR(255),
+    email                         VARCHAR(255),
+    phone                         VARCHAR(20),
+    address                       VARCHAR(255),
+    commercial_registration       VARCHAR(255),-- Matricual mercantil
+    id_country                    BIGINT,      -- pais
+    id_state                      BIGINT,      -- departamento
+    id_city                       BIGINT,      -- ciudad
+    id_types_identification       BIGINT,      -- tipo de indentificacion
+    id_type_contributor           BIGINT,      -- tipo de contribuyente
+    id_type_tax_regime            BIGINT,      -- tipo de regimen fiscal
+    id_type_fiscal_responsibility BIGINT,      -- tipo de responsabilidad fiscal
+    create_by                     VARCHAR(255),
+    create_date                   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_by                     VARCHAR(255),
+    update_date                   TIMESTAMP
 );
 
 -- secuencias numericas de los productos
@@ -101,13 +113,10 @@ CREATE TABLE sales
     id_sale           BIGSERIAL PRIMARY KEY,
     id_business       BIGINT,
     sale_number       VARCHAR(10),
-    id_user           BIGINT, --usuario que regsitro la venta
+    id_user           BIGINT,                  --usuario que regsitro la venta
     id_client         BIGINT,
-    total_price       DECIMAL(10, 2) NOT NULL,
-    paid_amount       DECIMAL(10, 2),
-    change            DECIMAL(10, 2),
+    paid_amount       DECIMAL(10, 2) NOT NULL, --  total_pagado
     registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    active            BOOLEAN   DEFAULT TRUE,
     create_by         VARCHAR(255),
     create_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -119,12 +128,31 @@ CREATE TABLE sales_detail
     id_sale         BIGINT,
     id_product      BIGINT,
     description     VARCHAR(150),
+
+    paid_amount     DECIMAL(10, 2),
+    change          DECIMAL(10, 2),
     quantity        INT,
     sale_price      DECIMAL(10, 2),
-    total_price     DECIMAL(10, 2),
     create_by       VARCHAR(255),
     create_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+-- detalle de ventas
+CREATE TABLE sales_payments
+(
+    id_payment              BIGSERIAL PRIMARY KEY,
+    id_sale                 BIGINT,
+    id_types_form_payment   BIGINT,
+    id_type_payment_methods BIGINT,
+    paid_amount             DECIMAL(10, 2),
+    change                  DECIMAL(10, 2),
+    quantity                INT,
+    sale_price              DECIMAL(10, 2),
+    create_by               VARCHAR(255),
+    create_date             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 -- tipos de medidas para los productos
 CREATE TABLE types_measures
@@ -309,8 +337,8 @@ CREATE TABLE types_fiscal_responsibility
 CREATE TABLE types_form_payment
 (
     id_types_form_payment BIGSERIAL PRIMARY KEY,
-    code                    VARCHAR(20),
-    name                    VARCHAR(100) NOT NULL,
+    code                  VARCHAR(20),
+    name                  VARCHAR(100) NOT NULL,
     UNIQUE (code, name)
 );
 
