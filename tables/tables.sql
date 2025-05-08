@@ -26,15 +26,14 @@ CREATE TABLE business
 -- Categorias de los productos
 CREATE TABLE categories
 (
-    id_category     BIGSERIAL PRIMARY KEY,
-    id_business     BIGINT,
-    name            VARCHAR(50) NOT NULL,
-    id_type_measure BIGINT,
-    active          BOOLEAN   DEFAULT TRUE,
-    create_by       VARCHAR(255),
-    create_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_by       VARCHAR(255),
-    update_date     TIMESTAMP
+    id_category BIGSERIAL PRIMARY KEY,
+    id_business BIGINT,
+    name        VARCHAR(50) NOT NULL,
+    active      BOOLEAN   DEFAULT TRUE,
+    create_by   VARCHAR(255),
+    create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_by   VARCHAR(255),
+    update_date TIMESTAMP
 );
 
 -- proveedor de los productos
@@ -60,18 +59,25 @@ CREATE TABLE products
     id_business      BIGINT,
     id_provider      BIGINT,
     id_category      BIGINT,
+    id_type_measure  BIGINT,
     code             VARCHAR(50)    NOT NULL,
     description      VARCHAR(150)   NOT NULL,
     purchase_price   DECIMAL(10, 2) NOT NULL,
     sale_price       DECIMAL(10, 2) NOT NULL,
-    quantity         INT            NOT NULL DEFAULT 0,
-    minimum_quantity INT            NOT NULL DEFAULT 0,
-    picture          BYTEA          NOT NULL,
+    quantity         DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    minimum_quantity DECIMAL(10, 2) NOT NULL DEFAULT 0,
     active           BOOLEAN                 DEFAULT TRUE,
     create_by        VARCHAR(255),
     create_date      TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
     update_by        VARCHAR(255),
     update_date      TIMESTAMP
+);
+
+CREATE TABLE product_pictures
+(
+    id_product_picture BIGSERIAL PRIMARY KEY,
+    id_product         BIGINT NOT NULL,
+    picture            BYTEA  NOT NULL
 );
 
 CREATE TABLE clients
@@ -110,45 +116,43 @@ CREATE TABLE sales_sequence
 -- ventas
 CREATE TABLE sales
 (
-    id_sale           BIGSERIAL PRIMARY KEY,
-    id_business       BIGINT,
-    sale_number       VARCHAR(10),
-    id_user           BIGINT,                  --usuario que regsitro la venta
-    id_client         BIGINT,
-    paid_amount       DECIMAL(10, 2) NOT NULL, --  total_pagado
-    registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    create_by         VARCHAR(255),
-    create_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id_sale                  BIGSERIAL PRIMARY KEY,   -- id tabla
+    id_business              BIGINT,                  -- id negocio o empresa
+    sale_number              VARCHAR(10),             -- id venta
+    id_user                  BIGINT,                  -- usuario que regsitro la venta
+    id_client                BIGINT,                  -- id cliente
+    paid_amount              DECIMAL(10, 2) NOT NULL, -- total_pagado
+    id_cash_register_session BIGINT,                  -- id de la caja que se encuentra abierta
+    registration_date        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    create_by                VARCHAR(255),
+    create_date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- todo mirar el tema de impuestos en los productos
 -- detalle de ventas
 CREATE TABLE sales_detail
 (
-    id_sales_detail BIGSERIAL PRIMARY KEY,
-    id_sale         BIGINT,
-    id_product      BIGINT,
-    description     VARCHAR(150),
-
-    paid_amount     DECIMAL(10, 2),
-    change          DECIMAL(10, 2),
-    quantity        INT,
-    sale_price      DECIMAL(10, 2),
+    id_sales_detail BIGSERIAL PRIMARY KEY, -- id
+    id_sale         BIGINT,                -- id tabla venta
+    id_product      BIGINT,                -- id producto
+    unit_price      BIGINT,                -- precio de la unidad
+    quantity        INT,                   -- cantidad del producto
+    sale_price      DECIMAL(10, 2),        -- valor de la venta del producto
     create_by       VARCHAR(255),
     create_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
--- detalle de ventas
+-- pagos realizados por venta
 CREATE TABLE sales_payments
 (
-    id_payment              BIGSERIAL PRIMARY KEY,
-    id_sale                 BIGINT,
-    id_types_form_payment   BIGINT,
-    id_type_payment_methods BIGINT,
-    paid_amount             DECIMAL(10, 2),
-    change                  DECIMAL(10, 2),
-    quantity                INT,
-    sale_price              DECIMAL(10, 2),
+    id_payment              BIGSERIAL PRIMARY KEY, -- id tabla
+    id_sale                 BIGINT,                -- id tabla venta
+    id_types_form_payment   BIGINT,                -- tipo de pago
+    id_type_payment_methods BIGINT,                -- metodo de pago
+    money_received          DECIMAL(10, 2),        -- cantidad recibida cuando es efectivo
+    change                  DECIMAL(10, 2),        -- cambio devuelto de la cantidad recbidad
+    paid_amount             DECIMAL(10, 2),        -- total pagado  con el tipo de pago y metodo de pago
     create_by               VARCHAR(255),
     create_date             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -350,6 +354,16 @@ CREATE TABLE types_payment_methods
     name                    VARCHAR(100) NOT NULL,
     UNIQUE (code, name)
 );
+
+-- Tabla: tipos de descuento
+CREATE TABLE types_discounts
+(
+    id_type_discount BIGSERIAL PRIMARY KEY,
+    code             VARCHAR(20),
+    name             VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
+
 
 
 CREATE TABLE issuers
