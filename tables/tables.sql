@@ -365,6 +365,25 @@ CREATE TABLE types_discounts
 );
 
 
+-- Tabla: tipos de descuento
+CREATE TABLE types_detailed_charges
+(
+    id_type_detailed_charge BIGSERIAL PRIMARY KEY,
+    code                    VARCHAR(20),
+    name                    VARCHAR(100) NOT NULL,
+    UNIQUE (code, name)
+);
+
+-- Tabla: tipos de impuestos
+CREATE TABLE types_taxes
+(
+    id_type_tax BIGSERIAL PRIMARY KEY,
+    code        VARCHAR(20),
+    name        VARCHAR(100) NOT NULL,
+    description VARCHAR(255),
+    UNIQUE (code, name)
+);
+
 
 CREATE TABLE issuers
 (
