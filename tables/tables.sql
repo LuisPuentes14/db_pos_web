@@ -55,29 +55,79 @@ CREATE TABLE providers
 -- productos
 CREATE TABLE products
 (
-    id_product       BIGSERIAL PRIMARY KEY,
-    id_business      BIGINT,
-    id_provider      BIGINT,
-    id_category      BIGINT,
-    id_type_measure  BIGINT,
-    code             VARCHAR(50)    NOT NULL,
-    description      VARCHAR(150)   NOT NULL,
-    purchase_price   DECIMAL(10, 2) NOT NULL,
-    sale_price       DECIMAL(10, 2) NOT NULL,
-    quantity         DECIMAL(10, 2) NOT NULL DEFAULT 0,
-    minimum_quantity DECIMAL(10, 2) NOT NULL DEFAULT 0,
-    active           BOOLEAN                 DEFAULT TRUE,
-    create_by        VARCHAR(255),
-    create_date      TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
-    update_by        VARCHAR(255),
-    update_date      TIMESTAMP
+    id_product           BIGSERIAL PRIMARY KEY,
+    id_business          BIGINT,                  -- id negocio o empresa
+    id_provider          BIGINT,                  -- proveedor del producto
+    id_category          BIGINT,                  -- categoria del producto
+    id_brand             BIGINT,                  -- marca del producto
+    id_type_measure      BIGINT,                  -- tipo de medida
+    code                 VARCHAR(50)    NOT NULL, -- codigo de referencia del producto
+    bar_code             VARCHAR(1000),           -- codigo de barras
+    id_product_status    BIGINT         NOT NULL, -- id estado del producto (nuevo, usado, etc)
+    name                 TEXT           NOT NULL, -- nombre del producto
+    description          TEXT           NOT NULL, -- descripcion del producto
+    purchase_price       DECIMAL(10, 2) NOT NULL,
+    sale_price           DECIMAL(10, 2) NOT NULL,
+    quantity             DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    minimum_quantity     DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    promotion_percentage DECIMAL(10, 2) NOT NULL DEFAULT 0,
+    promotion_star_date  TIMESTAMP,
+    promotion_end_date   TIMESTAMP,
+    promotion_active     BOOLEAN                 DEFAULT FALSE,
+    active               BOOLEAN                 DEFAULT TRUE,
+    create_by            VARCHAR(255),
+    create_date          TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
+    update_by            VARCHAR(255),
+    update_date          TIMESTAMP,
+    UNIQUE (id_business, code),
+    UNIQUE (id_business, bar_code)
 );
+
 
 CREATE TABLE product_pictures
 (
     id_product_picture BIGSERIAL PRIMARY KEY,
     id_product         BIGINT NOT NULL,
     picture            BYTEA  NOT NULL
+);
+
+-- estados de productos
+CREATE TABLE products_status
+(
+    id_product_status BIGSERIAL PRIMARY KEY,
+    id_business       BIGINT, -- id negocio o empresa
+    description       VARCHAR(150) NOT NULL,
+    create_by         VARCHAR(255),
+    create_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_by         VARCHAR(255),
+    update_date       TIMESTAMP
+);
+
+-- marcas de productos
+CREATE TABLE brands
+(
+    id_brand    BIGSERIAL PRIMARY KEY,
+    id_business BIGINT, -- id negocio o empresa
+    name        VARCHAR(50)  NOT NULL,
+    description VARCHAR(150) NOT NULL,
+    create_by   VARCHAR(255),
+    create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_by   VARCHAR(255),
+    update_date TIMESTAMP
+);
+
+-- impuestos por productos
+CREATE TABLE taxes_by_products
+(
+    id_tax_by_product BIGSERIAL PRIMARY KEY,
+    id_business       BIGINT,                  -- id negocio o empresa
+    id_product        BIGINT,                  -- id producto
+    id_type_tax       BIGINT,                  -- id tipo de impuesto
+    percentage        DECIMAL(10, 2) NOT NULL, -- porcentaje del impuesto
+    create_by         VARCHAR(255),
+    create_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    update_by         VARCHAR(255),
+    update_date       TIMESTAMP
 );
 
 CREATE TABLE clients
@@ -107,10 +157,9 @@ CREATE TABLE sales_sequence
 (
     id_sale_sequence BIGSERIAL,
     id_business      BIGINT,
-    series           VARCHAR(3) NOT NULL,
-    number           BIGINT     NOT NULL,
-    active           BOOLEAN DEFAULT TRUE,
-    PRIMARY KEY (id_business, series, number)
+    number           BIGINT NOT NULL DEFAULT 1,
+    active           BOOLEAN         DEFAULT TRUE,
+    PRIMARY KEY (id_business, number)
 );
 
 -- ventas
@@ -128,21 +177,6 @@ CREATE TABLE sales
     create_date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- todo mirar el tema de impuestos en los productos
--- detalle de ventas
-CREATE TABLE sales_detail
-(
-    id_sales_detail BIGSERIAL PRIMARY KEY, -- id
-    id_sale         BIGINT,                -- id tabla venta
-    id_product      BIGINT,                -- id producto
-    unit_price      BIGINT,                -- precio de la unidad
-    quantity        INT,                   -- cantidad del producto
-    sale_price      DECIMAL(10, 2),        -- valor de la venta del producto
-    create_by       VARCHAR(255),
-    create_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-
 -- pagos realizados por venta
 CREATE TABLE sales_payments
 (
@@ -157,6 +191,61 @@ CREATE TABLE sales_payments
     create_date             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+CREATE TABLE sales_detail
+(
+    id_sales_detail     BIGSERIAL PRIMARY KEY, -- id
+    id_sale             BIGINT,                -- id tabla venta
+    product_code        VARCHAR(50),           -- codigo del producto
+    product_bar_code    VARCHAR(1000),         -- codigo de barras
+    product_name        TEXT,                  -- nombre de producto
+    product_description TEXT,                  -- descipcion de producto
+    unit_price          BIGINT,                -- precio de la unidad
+    quantity            INT,                   -- cantidad del producto
+    sale_price          DECIMAL(10, 2),        -- valor de la venta del producto
+    create_by           VARCHAR(255),
+    create_date         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- detalle de impuestos por producto vendido
+CREATE TABLE sales_detail_taxes
+(
+    id_sales_detail_tax BIGSERIAL PRIMARY KEY,   -- id
+    id_sales_detail     BIGINT,                  -- id tabla detalle de venta
+    id_type_tax         BIGINT,                  -- id tipo de impuesto
+    percentage          DECIMAL(10, 2) NOT NULL, -- porcentaje del impuesto
+    amount              DECIMAL(10, 2) NOT NULL, -- valor del impuesto
+    tax_base            DECIMAL(10, 2) NOT NULL, -- valor del impuesto
+    create_by           VARCHAR(255),
+    create_date         TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- detalle de cargos o recaregos por producto vendido
+CREATE TABLE sales_detail_charges
+(
+    id_sales_detail_charge  BIGSERIAL PRIMARY KEY,   -- id
+    id_sales_detail         BIGINT,                  -- id tabla detalle de venta
+    id_type_detailed_charge BIGINT,                  -- id tipo de recargo
+    percentage              DECIMAL(10, 2) NOT NULL, -- porcentaje del recargo
+    amount                  DECIMAL(10, 2) NOT NULL, -- valor del recargo
+    charge_base             DECIMAL(10, 2) NOT NULL, -- base del recargo
+    create_by               VARCHAR(255),
+    create_date             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- detalle de descuentos por producto vendido
+CREATE TABLE sales_detail_discounts
+(
+    id_sales_detail_discount BIGSERIAL PRIMARY KEY,   -- id
+    id_sales_detail          BIGINT,                  -- id tabla detalle de venta
+    id_type_discount         BIGINT,                  -- id tipo de descuento
+    percentage               DECIMAL(10, 2) NOT NULL, -- porcentaje del descuento
+    amount                   DECIMAL(10, 2) NOT NULL, -- valor del descuento
+    discount_base            DECIMAL(10, 2) NOT NULL, -- base de descuento
+    create_by                VARCHAR(255),
+    create_date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 -- tipos de medidas para los productos
 CREATE TABLE types_measures
@@ -365,7 +454,7 @@ CREATE TABLE types_discounts
 );
 
 
--- Tabla: tipos de descuento
+-- Tabla: tipos de cargos
 CREATE TABLE types_detailed_charges
 (
     id_type_detailed_charge BIGSERIAL PRIMARY KEY,

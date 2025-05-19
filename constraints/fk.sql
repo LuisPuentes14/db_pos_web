@@ -18,7 +18,11 @@ ALTER TABLE IF EXISTS public.products
     ADD CONSTRAINT fk_product__provider FOREIGN KEY (id_provider)
         REFERENCES public.providers (id_provider) MATCH SIMPLE,
     ADD CONSTRAINT fk_product__types_measures FOREIGN KEY (id_type_measure)
-        REFERENCES public.types_measures (id_type_measure) MATCH SIMPLE
+        REFERENCES public.types_measures (id_type_measure) MATCH SIMPLE,
+    ADD CONSTRAINT fk_product__products_status FOREIGN KEY (id_product_status)
+        REFERENCES public.products_status (id_product_status) MATCH SIMPLE,
+    ADD CONSTRAINT fk_product__brands FOREIGN KEY (id_brand)
+        REFERENCES public.brands (id_brand) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
@@ -112,5 +116,49 @@ ALTER TABLE IF EXISTS public.clients
 ALTER TABLE IF EXISTS public.product_pictures
     ADD CONSTRAINT fk_product_pictures__products FOREIGN KEY (id_product)
         REFERENCES public.products (id_product) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.brands
+    ADD CONSTRAINT fk_brands__business FOREIGN KEY (id_business)
+        REFERENCES public.business (id_business) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.taxes_by_products
+    ADD CONSTRAINT fk_taxes_by_products__business FOREIGN KEY (id_business)
+        REFERENCES public.business (id_business) MATCH SIMPLE,
+    ADD CONSTRAINT fk_taxes_by_products__products FOREIGN KEY (id_product)
+        REFERENCES public.products (id_product) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.products_status
+    ADD CONSTRAINT fk_tproducts_status__business FOREIGN KEY (id_business)
+        REFERENCES public.business (id_business) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.sales_detail_taxes
+    ADD CONSTRAINT fk_sales_detail_taxes_status__sales_detail FOREIGN KEY (id_sales_detail)
+        REFERENCES public.sales_detail (id_sales_detail) MATCH SIMPLE,
+    ADD CONSTRAINT fk_sales_detail_taxes_status__types_taxes FOREIGN KEY (id_type_tax)
+        REFERENCES public.types_taxes (id_type_tax) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.sales_detail_charges
+    ADD CONSTRAINT fk_sales_detail_charges__sales_detail FOREIGN KEY (id_sales_detail)
+        REFERENCES public.sales_detail (id_sales_detail) MATCH SIMPLE,
+    ADD CONSTRAINT fk_sales_detail_charges__types_detailed_charges FOREIGN KEY (id_type_detailed_charge)
+        REFERENCES public.types_detailed_charges (id_type_detailed_charge) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.sales_detail_discounts
+    ADD CONSTRAINT fk_sales_detail_discounts__sales_detail FOREIGN KEY (id_sales_detail)
+        REFERENCES public.sales_detail (id_sales_detail) MATCH SIMPLE,
+    ADD CONSTRAINT fk_sales_detail_discounts__types_discounts FOREIGN KEY (id_type_discount)
+        REFERENCES public.types_discounts (id_type_discount) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
