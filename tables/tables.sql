@@ -83,7 +83,7 @@ CREATE TABLE products
     UNIQUE (id_business, bar_code)
 );
 
-
+-- imagenes por productos
 CREATE TABLE product_pictures
 (
     id_product_picture BIGSERIAL PRIMARY KEY,
@@ -290,14 +290,8 @@ CREATE TABLE sales_detail_discounts
 CREATE TABLE types_measures
 (
     id_type_measure BIGSERIAL PRIMARY KEY,
-    name            VARCHAR(50) NOT NULL,
-    abbreviation    VARCHAR(4)  NOT NULL,
-    equivalent      VARCHAR(4)  NOT NULL,
-    value           INT         NOT NULL,
-    create_by       VARCHAR(255),
-    create_date     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_by       VARCHAR(255),
-    update_date     TIMESTAMP
+    code                    VARCHAR(20),
+    name                    VARCHAR(100) NOT NULL
 );
 
 -- Cajas resgitradoras
