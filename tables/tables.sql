@@ -191,6 +191,45 @@ CREATE TABLE sales_payments
     create_date             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- impuestos por venta realizada
+CREATE TABLE sales_taxes
+(
+    id_sales_tax BIGSERIAL PRIMARY KEY,   -- id
+    id_sale      BIGINT,                  -- id tabla de venta
+    id_type_tax  BIGINT,                  -- id tipo de impuesto
+    percentage   DECIMAL(10, 2) NOT NULL, -- porcentaje del impuesto
+    amount       DECIMAL(10, 2) NOT NULL, -- valor del impuesto
+    tax_base     DECIMAL(10, 2) NOT NULL, -- Base del valor del impuesto
+    create_by    VARCHAR(255),
+    create_date  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- cargos por venta realizada
+CREATE TABLE sales_charges
+(
+    id_sales_charge         BIGSERIAL PRIMARY KEY,   -- id
+    id_sale                 BIGINT,                  -- id tabla de venta
+    id_type_detailed_charge BIGINT,                  -- id tipo de recargo
+    percentage              DECIMAL(10, 2) NOT NULL, -- porcentaje del recargo
+    amount                  DECIMAL(10, 2) NOT NULL, -- valor del recargo
+    charge_base             DECIMAL(10, 2) NOT NULL, -- Base del valor del recargo
+    create_by               VARCHAR(255),
+    create_date             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- descuento por venta realizada
+CREATE TABLE sales_discounts
+(
+    id_sales_discount BIGSERIAL PRIMARY KEY,   -- id
+    id_sale           BIGINT,                  -- id tabla de venta
+    id_type_discount  BIGINT,                  -- id tipo de descuto
+    percentage        DECIMAL(10, 2) NOT NULL, -- porcentaje del descuento
+    amount            DECIMAL(10, 2) NOT NULL, -- valor del recargo
+    discount_base     DECIMAL(10, 2) NOT NULL, -- Base del valor del descuento
+    create_by         VARCHAR(255),
+    create_date       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 CREATE TABLE sales_detail
 (
@@ -261,19 +300,36 @@ CREATE TABLE types_measures
     update_date     TIMESTAMP
 );
 
+-- Cajas resgitradoras
+CREATE TABLE cash_registers
+(
+    id_cash_register BIGSERIAL PRIMARY KEY,
+    id_business      BIGINT,
+    name             VARCHAR(50),
+    status           VARCHAR(20) NOT NULL DEFAULT 'ACTIVA' CHECK (status IN ('ACTIVA', 'DESACTIVA') ), -- ACTIVA | DESACTIVA
+    notes            TEXT,
+    create_by        VARCHAR(255),
+    create_date      TIMESTAMP            DEFAULT CURRENT_TIMESTAMP,
+    update_by        VARCHAR(255),
+    update_date      TIMESTAMP,
+    UNIQUE (id_business, name)
+);
+
 -- apertura y cierre de la caja
 CREATE TABLE cash_register_sessions
 (
-    id_cash_register_session BIGSERIAL PRIMARY KEY,
-    id_user                  BIGINT         NOT NULL,                                                             -- ID del cajero
-    opening_amount           NUMERIC(12, 2) NOT NULL,
-    closing_amount           NUMERIC(12, 2),
-    status                   VARCHAR(20)    NOT NULL DEFAULT 'ABIERTO' CHECK (status IN ('ABIERTO', 'CERRADO') ), -- ABIERTO | CERRADO
-    notes                    TEXT,
-    create_by                VARCHAR(255),
-    create_date              TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
-    update_by                VARCHAR(255),
-    update_date              TIMESTAMP
+    id_cash_register_session  BIGSERIAL PRIMARY KEY,
+    id_cash_register          INTEGER,
+    login_open_cash_register  VARCHAR(20)    NOT NULL,                                                             -- usuario que abrela caja
+    login_close_cash_register VARCHAR(20),                                                                         -- ID del cajero
+    opening_amount            NUMERIC(12, 2) NOT NULL CHECK ( opening_amount >= 0 ),
+    closing_amount            NUMERIC(12, 2),
+    status                    VARCHAR(20)    NOT NULL DEFAULT 'ABIERTO' CHECK (status IN ('ABIERTO', 'CERRADO') ), -- ABIERTO | CERRADO
+    notes                     TEXT,
+    create_by                 VARCHAR(255),
+    create_date               TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
+    update_by                 VARCHAR(255),
+    update_date               TIMESTAMP
 );
 
 --Registra entradas y salidas de efectivo a la caja (que no sean ventas).
@@ -283,12 +339,9 @@ CREATE TABLE cash_entries_withdrawals
     id_cash_register_session BIGINT         NOT NULL,
     amount                   NUMERIC(12, 2) NOT NULL CHECK ( amount >= 0 ),
     reason                   TEXT           NOT NULL,
-    id_user                  BIGINT,
     type                     VARCHAR(20)    NOT NULL DEFAULT 'ENTRADA' CHECK (type IN ('ENTRADA', 'SALIDA') ),
     create_by                VARCHAR(255),
-    create_date              TIMESTAMP               DEFAULT CURRENT_TIMESTAMP,
-    update_by                VARCHAR(255),
-    update_date              TIMESTAMP
+    create_date              TIMESTAMP               DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -296,14 +349,12 @@ CREATE TABLE cash_counts
 (
     id_cash_count            BIGSERIAL PRIMARY KEY,
     id_cash_register_session BIGINT         NOT NULL,
-    counted_amount           NUMERIC(12, 2) NOT NULL,
+    registered_quantity      NUMERIC(12, 2) NOT NULL CHECK ( registered_quantity >= 0 ),
+    counted_amount           NUMERIC(12, 2) NOT NULL CHECK ( registered_quantity >= 0 ),
     difference               NUMERIC(12, 2), -- diferencia entre lo contado y lo esperado
     notes                    TEXT,
-    id_user                  BIGINT,
     create_by                VARCHAR(255),
-    create_date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    update_by                VARCHAR(255),
-    update_date              TIMESTAMP
+    create_date              TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ----------------------------------------------
 

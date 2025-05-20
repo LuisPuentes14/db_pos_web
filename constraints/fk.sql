@@ -54,25 +54,27 @@ ALTER TABLE IF EXISTS public.sales_sequence
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
+ALTER TABLE IF EXISTS public.cash_registers
+    ADD CONSTRAINT fk_cash_registers__business FOREIGN KEY (id_business)
+        REFERENCES public.sales (id_sale) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
 ALTER TABLE IF EXISTS public.cash_register_sessions
-    ADD CONSTRAINT fk_cash_register_sessions__user_account FOREIGN KEY (id_user)
-        REFERENCES public.user_accounts (id_user) MATCH SIMPLE
+    ADD CONSTRAINT fk_cash_register_sessions__cash_registers FOREIGN KEY (id_cash_register)
+        REFERENCES public.cash_registers (id_cash_register) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
 ALTER TABLE IF EXISTS public.cash_entries_withdrawals
     ADD CONSTRAINT fk_cash_entries_withdrawals__cash_register_sessions FOREIGN KEY (id_cash_register_session)
-        REFERENCES public.cash_register_sessions (id_cash_register_session) MATCH SIMPLE,
-    ADD CONSTRAINT fk_cash_entries_withdrawals__user_account FOREIGN KEY (id_user)
-        REFERENCES public.user_accounts (id_user) MATCH SIMPLE
+        REFERENCES public.cash_register_sessions (id_cash_register_session) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
 ALTER TABLE IF EXISTS public.cash_counts
     ADD CONSTRAINT fk_cash_counts__cash_register_sessions FOREIGN KEY (id_cash_register_session)
-        REFERENCES public.cash_register_sessions (id_cash_register_session) MATCH SIMPLE,
-    ADD CONSTRAINT fk_cash_counts___user_account FOREIGN KEY (id_user)
-        REFERENCES public.user_accounts (id_user) MATCH SIMPLE
+        REFERENCES public.cash_register_sessions (id_cash_register_session) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 
@@ -162,3 +164,29 @@ ALTER TABLE IF EXISTS public.sales_detail_discounts
         REFERENCES public.types_discounts (id_type_discount) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.sales_taxes
+    ADD CONSTRAINT fk_sales_taxes__sales FOREIGN KEY (id_sale)
+        REFERENCES public.sales (id_sale) MATCH SIMPLE,
+    ADD CONSTRAINT fk_sales_taxes__types_taxes FOREIGN KEY (id_type_tax)
+        REFERENCES public.types_taxes (id_type_tax) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.sales_charges
+    ADD CONSTRAINT fk_sales_charges__sales FOREIGN KEY (id_sale)
+        REFERENCES public.sales (id_sale) MATCH SIMPLE,
+    ADD CONSTRAINT fk_sales_charges__types_detailed_charges FOREIGN KEY (id_type_detailed_charge)
+        REFERENCES public.types_detailed_charges (id_type_detailed_charge) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+ALTER TABLE IF EXISTS public.sales_discounts
+    ADD CONSTRAINT fk_sales_discounts__sales FOREIGN KEY (id_sale)
+        REFERENCES public.sales (id_sale) MATCH SIMPLE,
+    ADD CONSTRAINT fk_sales_discounts__types_discounts FOREIGN KEY (id_type_discount)
+        REFERENCES public.types_discounts (id_type_discount) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;
+
+
